@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration
-HF_API_TOKEN = os.getenv('HF_API_TOKEN', '')
+HF_API_TOKEN = os.getenv('HF_API_TOKEN')
 HF_MODEL_SENTIMENT = "distilbert-base-uncased-finetuned-sst-2-english"
 HF_MODEL_FINANCIAL = "ProsusAI/finbert"
 
