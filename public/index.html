@@ -1,199 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinTech AI - Analyse Financière avec IA</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Fintech AI Advisor</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <h1>💰 FinTech AI</h1>
-                <p class="subtitle">Analyse Financière Intelligente avec Hugging Face</p>
-            </div>
-            <div class="status-indicator" id="statusIndicator">
-                <span class="status-dot"></span>
-                <span class="status-text">Connexion...</span>
-            </div>
-        </header>
 
-        <!-- Navigation -->
-        <nav class="nav-tabs">
-            <button class="nav-btn active" data-tab="sentiment">Analyse Sentiment</button>
-            <button class="nav-btn" data-tab="risk">Analyse Risque</button>
-            <button class="nav-btn" data-tab="trend">Prédiction Tendance</button>
-            <button class="nav-btn" data-tab="portfolio">Portefeuille</button>
-        </nav>
+<div class="chat">
+  <h1>💳 Fintech Advisor</h1>
+  <div id="messages"></div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Sentiment Analysis Tab -->
-            <section id="sentiment" class="tab-content active">
-                <div class="card">
-                    <h2>📊 Analyse de Sentiment</h2>
-                    <p class="description">Analysez le sentiment d'un texte financier ou d'une actualité</p>
-                    
-                    <div class="form-group">
-                        <label for="sentimentText">Texte à analyser:</label>
-                        <textarea id="sentimentText" placeholder="Entrez votre texte financier..." rows="4"></textarea>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button class="btn btn-primary" onclick="analyzeSentiment()">Analyser</button>
-                        <button class="btn btn-secondary" onclick="analyzeWithFinBERT()">Analyser avec FinBERT</button>
-                    </div>
-                    
-                    <div id="sentimentResult" class="result-box" style="display: none;">
-                        <div class="result-item">
-                            <span class="label">Sentiment:</span>
-                            <span id="sentimentLabel" class="value"></span>
-                        </div>
-                        <div class="result-item">
-                            <span class="label">Confiance:</span>
-                            <div class="progress-bar">
-                                <div id="sentimentScore" class="progress-fill"></div>
-                                <span id="sentimentScoreText" class="progress-text">0%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+  <div class="input">
+    <input id="input" placeholder="Pose ta question fintech…" />
+    <button onclick="send()">Envoyer</button>
+  </div>
+</div>
 
-            <!-- Risk Analysis Tab -->
-            <section id="risk" class="tab-content">
-                <div class="card">
-                    <h2>⚠️ Analyse de Risque</h2>
-                    <p class="description">Évaluez le risque d'un investissement</p>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="volatility">Volatilité (%):</label>
-                            <input type="number" id="volatility" value="15" step="0.1" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="debtRatio">Ratio d'Endettement (%):</label>
-                            <input type="number" id="debtRatio" value="30" step="0.1" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="liquidity">Liquidité:</label>
-                            <input type="number" id="liquidity" value="1.5" step="0.1" min="0.1">
-                        </div>
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="calculateRisk()">Calculer le Risque</button>
-                    
-                    <div id="riskResult" class="result-box" style="display: none;">
-                        <div class="risk-meter">
-                            <div class="risk-circle">
-                                <div id="riskCircle" class="risk-indicator"></div>
-                                <span id="riskScoreDisplay">0</span>
-                            </div>
-                            <div class="risk-info">
-                                <div class="result-item">
-                                    <span class="label">Niveau de Risque:</span>
-                                    <span id="riskLevel" class="value"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Trend Prediction Tab -->
-            <section id="trend" class="tab-content">
-                <div class="card">
-                    <h2>📈 Prédiction de Tendance</h2>
-                    <p class="description">Prédisez la tendance basée sur les données historiques</p>
-                    
-                    <div class="form-group">
-                        <label for="priceData">Prix Historiques (séparés par des virgules):</label>
-                        <input type="text" id="priceData" placeholder="100, 105, 103, 110, 115..." />
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="predictTrend()">Prédire la Tendance</button>
-                    
-                    <div id="trendResult" class="result-box" style="display: none;">
-                        <div class="chart-container">
-                            <canvas id="trendChart" width="400" height="200"></canvas>
-                        </div>
-                        <div class="result-items">
-                            <div class="result-item">
-                                <span class="label">Direction:</span>
-                                <span id="trendDirection" class="value"></span>
-                            </div>
-                            <div class="result-item">
-                                <span class="label">Variation:</span>
-                                <span id="trendPercent" class="value"></span>
-                            </div>
-                            <div class="result-item">
-                                <span class="label">Volatilité:</span>
-                                <span id="trendVolatility" class="value"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Portfolio Tab -->
-            <section id="portfolio" class="tab-content">
-                <div class="card">
-                    <h2>💼 Analyse de Portefeuille</h2>
-                    <p class="description">Analysez la composition et la répartition de votre portefeuille</p>
-                    
-                    <div class="portfolio-form">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="assetName">Nom de l'Actif:</label>
-                                <input type="text" id="assetName" placeholder="ex: Apple">
-                            </div>
-                            <div class="form-group">
-                                <label for="assetValue">Valeur ($):</label>
-                                <input type="number" id="assetValue" placeholder="5000" min="0" step="100">
-                            </div>
-                            <div class="form-group">
-                                <label for="assetRisk">Risque (0-1):</label>
-                                <input type="number" id="assetRisk" value="0.5" min="0" max="1" step="0.1">
-                            </div>
-                        </div>
-                        <button class="btn btn-secondary" onclick="addAsset()">Ajouter Actif</button>
-                    </div>
-                    
-                    <div id="portfolioList" class="portfolio-list"></div>
-                    <button class="btn btn-primary" onclick="analyzePortfolio()" style="display: none;" id="analyzeBtn">Analyser le Portefeuille</button>
-                    
-                    <div id="portfolioResult" class="result-box" style="display: none;">
-                        <div class="portfolio-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Valeur Totale</span>
-                                <span id="portfolioTotal" class="stat-value">$0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Risque Moyen</span>
-                                <span id="portfolioRisk" class="stat-value">0</span>
-                            </div>
-                        </div>
-                        <div class="allocation-chart" id="allocationChart"></div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <p>FinTech AI © 2024 | Alimenté par Hugging Face 🤗</p>
-            <p class="footer-note">API gratuite | Modèles open-source</p>
-        </footer>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
-        <div class="spinner"></div>
-        <p>Traitement en cours...</p>
-    </div>
-
-    <script src="script.js"></script>
+<script src="/script.js"></script>
 </body>
 </html>
