@@ -1,5 +1,4 @@
 import os
-import json
 import requests
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
@@ -8,46 +7,56 @@ load_dotenv()
 
 app = Flask(__name__)
 
-HF_API_TOKEN = os.getenv('HF_API_TOKEN')
-HF_MODEL = 'HuggingFaceTB/SmolLM-1.7B-Instruct'
-HF_API_URL = f'https://api-inference.huggingface.co/models/{HF_MODEL}'
+# =========================
+# CONFIG
+# =========================
+HF_API_TOKEN = os.getenv("HF_API_TOKEN")
 
-SYSTEM_PROMPT = (
-    "Tu es un assistant fintech expert.\n"
-    "Tu donnes des conseils généraux sur la finance, les paiements et la fintech.\n"
-    "Tu n'es pas un conseiller financier officiel.\n"
-    "Tu refuses toute demande illégale ou frauduleuse.\n"
-    "Réponds de façon claire, simple et prudente.\n"
-)
+# modèle plus stable (important)
+HF_MODEL = "google/flan-t5-small"
+HF_API_URL = f"https://api-inference.huggingface.co/models/{HF_MODEL}"
+
+SYSTEM_PROMPT = """
+Tu es un assistant fintech expert.
+Tu donnes des conseils simples sur la finance, paiements et fintech.
+Tu n'es pas un conseiller financier officiel.
+Tu refuses toute demande illégale ou frauduleuse.
+Réponds clairement et simplement.
+"""
+
+# =========================
+# FRONT
+# =========================
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-@app.route('/api/chat', methods=['POST'])
+# =========================
+# API CHAT
+# =========================
+@app.route("/api/chat", methods=["POST"])
 def chat():
     try:
         data = request.get_json()
-        message = data.get('message', '').strip()
+        message = (data.get("message") if data else "").strip()
 
         if not message:
-            return jsonify({'error': 'Message requis'}), 400
+            return jsonify({"error": "Message vide"}), 400
 
         if not HF_API_TOKEN:
-            return jsonify({'error': 'API token non configuré'}), 500
+            return jsonify({"error": "Token API manquant"}), 500
 
         headers = {
-            'Authorization': f'Bearer {HF_API_TOKEN}',
-            'Content-Type': 'application/json'
+            "Authorization": f"Bearer {HF_API_TOKEN}",
+            "Content-Type": "application/json"
         }
 
         payload = {
-            'inputs': f'{SYSTEM_PROMPT}\nUtilisateur: {message}\nAssistant:',
-            'parameters': {
-                'max_new_tokens': 300,
-                'temperature': 0.7
+            "inputs": f"{SYSTEM_PROMPT}\nUser: {message}\nAssistant:",
+            "parameters": {
+                "max_new_tokens": 200,
+                "temperature": 0.7
             }
         }
 
@@ -55,21 +64,55 @@ def chat():
             HF_API_URL,
             headers=headers,
             json=payload,
-            timeout=45
+            timeout=90
         )
 
+        # =========================
+        # DEBUG (important)
+        # =========================
+        try:
+            data = response.json()
+        except Exception:
+            return jsonify({
+                "error": "Réponse IA invalide (non JSON)",
+                "raw": response.text
+            }), 500
+
+        print("STATUS:", response.status_code)
+        print("RAW:", response.text)
+
+        # =========================
+        # ERREURS API
+        # =========================
         if response.status_code != 200:
-            return jsonify({'error': 'Erreur API externe'}), response.status_code
+            return jsonify({
+                "error": "Erreur API externe",
+                "details": data
+            }), response.status_code
 
-        data = response.json()
-        answer = data[0]['generated_text']
-        answer = answer.split('Assistant:')[-1].strip()
+        if isinstance(data, dict) and data.get("error"):
+            return jsonify({"error": data["error"]}), 500
 
-        return jsonify({'reply': answer})
+        if not isinstance(data, list):
+            return jsonify({
+                "error": "Format IA invalide",
+                "raw": data
+            }), 500
+
+        answer = data[0].get("generated_text", "")
+
+        if "Assistant:" in answer:
+            answer = answer.split("Assistant:")[-1].strip()
+
+        return jsonify({"reply": answer})
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print("ERROR:", str(e))
+        return jsonify({"error": str(e)}), 500
 
 
-if __name__ == '__main__':
-    app.run(debug=False)
+# =========================
+# RUN
+# =========================
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=False)

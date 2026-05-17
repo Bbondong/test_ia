@@ -18,21 +18,28 @@ chatForm.addEventListener('submit', async (e) => {
     try {
         const response = await fetch('/api/chat', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message })
         });
 
-        const data = await response.json();
+        const text = await response.text();
+
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            addMessage("❌ Erreur serveur", "assistant");
+            return;
+        }
 
         if (data.error) {
-            addMessage(`❌ ${data.error}`, 'assistant');
+            addMessage("❌ " + data.error, "assistant");
         } else {
-            addMessage(data.reply, 'assistant');
+            addMessage(data.reply, "assistant");
         }
+
     } catch (error) {
-        addMessage(`❌ Erreur: ${error.message}`, 'assistant');
+        addMessage("❌ " + error.message, "assistant");
     } finally {
         sendBtn.disabled = false;
         sendBtn.textContent = 'Envoyer';
@@ -41,10 +48,10 @@ chatForm.addEventListener('submit', async (e) => {
 });
 
 function addMessage(text, role) {
-    const messageEl = document.createElement('div');
-    messageEl.className = `message ${role}`;
-    messageEl.innerHTML = `<p>${text}</p>`;
-    messagesContainer.appendChild(messageEl);
+    const div = document.createElement("div");
+    div.className = "message " + role;
+    div.innerHTML = "<p>" + text + "</p>";
+    messagesContainer.appendChild(div);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
