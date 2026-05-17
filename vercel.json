@@ -19,5 +19,8 @@
       "src": "/(.*)",
       "dest": "public/$1"
     }
-  ]
+  ],
+  "env": {
+    "HUGGINGFACE_API_TOKEN": "@huggingface_api_token"
+  }
 }
