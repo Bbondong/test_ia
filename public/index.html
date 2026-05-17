@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTech AI Assistant | Conseils Financiers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>💰 FinTech AI Assistant</h1>
+                <p class="subtitle">Conseils en finance et paiements</p>
+            </div>
+        </header>
+
+        <main class="chat-container">
+            <div class="messages" id="messages">
+                <div class="message assistant">
+                    <div class="message-content">
+                        <p>Bonjour! 👋 Je suis votre assistant fintech. Posez-moi vos questions sur la finance, les paiements, les crypto-monnaies, l'investissement et bien plus encore!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <form id="chatForm" class="chat-form">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="Tapez votre message..." 
+                        required
+                        autocomplete="off"
+                    >
+                    <button type="submit" id="sendBtn" class="send-btn">
+                        <span>Envoyer</span>
+                        <span class="spinner hidden" id="spinner">⏳</span>
+                    </button>
+                </form>
+            </div>
+
+            <footer class="footer">
+                <p>⚠️ Avertissement: Je ne suis pas un conseiller financier officiel. Consultez un professionnel.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
