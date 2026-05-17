@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTech AI Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>💰 FinTech AI</h1>
+            <p>Assistant financier IA</p>
+        </header>
+
+        <div class="chat-box">
+            <div class="messages" id="messages">
+                <div class="message assistant">
+                    <p>Bonjour! Je suis votre assistant fintech. Posez vos questions sur la finance.</p>
+                </div>
+            </div>
+
+            <form id="chatForm" class="input-box">
+                <input type="text" id="messageInput" placeholder="Votre message..." required>
+                <button type="submit" id="sendBtn">Envoyer</button>
+            </form>
+        </div>
+
+        <footer class="footer">
+            <p>⚠️ Non-professionnel | Consultez un expert</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
