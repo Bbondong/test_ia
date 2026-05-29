@@ -1,4 +1,10 @@
-flask
-python-dotenv
-groq
-gunicorn==21.2.0
+# Serveur Web
+Flask==3.0.3
+
+# Appels API (pour contacter l'IA)
+requests==2.32.3
+
+# Utilitaires de sécurité et environnement
+python-dotenv==1.0.1
+werkzeug==3.0.3
+gunicorn==22.0.0
